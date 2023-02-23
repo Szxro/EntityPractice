@@ -68,5 +68,49 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             _context.MovieTheaters.Add(_mapper.Map<MovieTheater>(movieTheater));
             await _context.SaveChangesAsync();
         }
+
+        public async Task<object> UpdateMovieTheaterManual(int movieTheaterId,MovieTheaterDTO movieTheater)
+        {
+            //Getting the item from the DB (? to posible null values)
+            MovieTheater? item = await _context.MovieTheaters.Where(prop => prop.Id == movieTheaterId).FirstOrDefaultAsync();
+            
+            if (item  == null)
+            {
+                return new { Message = "MovieTheater not found" };
+            }
+
+            //Creating the geometry instance
+            var geometryInstance = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
+            //Making a copy of it
+            MovieTheater movie = item with
+            {
+                Name = movieTheater.Name,
+                Description = movieTheater.Description,
+                Rating = movieTheater.Rating,
+                Location = geometryInstance.CreatePoint(new Coordinate(movieTheater.Latitude,movieTheater.Longitude))
+            };
+
+            _context.MovieTheaters.Update(movie);
+
+            await _context.SaveChangesAsync();
+
+            return new {Message = "Update Succesfully" };
+        }
+
+        public async Task<object> DeleteManual(int movieTheatherId)
+        { 
+            MovieTheater? item = await _context.MovieTheaters.Where(prop => prop.Id == movieTheatherId).FirstOrDefaultAsync();
+
+            if (item == null)
+            {
+                return new { Message = "MovieTheater not Found" };
+            }
+
+            _context.MovieTheaters.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return new {Message = "Deleted Succesfully" };
+        }
     }
 }

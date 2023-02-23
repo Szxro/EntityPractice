@@ -13,5 +13,9 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
         Task CreateMovieTheaterManual(MovieTheaterDTO movieTheater);
 
         Task CreateMovieTheaterAuto(MovieTheaterDTO movieTheater);
+
+        Task<object> UpdateMovieTheaterManual(int movieTheaterID,MovieTheaterDTO movieTheater);
+
+        Task<object> DeleteManual(int movieTheatherId);
     }
 }

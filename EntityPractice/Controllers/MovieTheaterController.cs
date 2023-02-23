@@ -68,5 +68,29 @@ namespace EntityPractice.Controllers
             await _repository.CreateMovieTheaterAuto(movieTheater);
             return Ok();    
         }
+
+        [HttpPut("update/updateManual")]
+
+        public async Task<ActionResult<object>> UpdateManual(int movieTheaterId,MovieTheaterDTO movieTheater)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(await _repository.UpdateMovieTheaterManual(movieTheaterId, movieTheater));
+        }
+
+        [HttpDelete("delete/deleteManual")]
+
+        public async Task<ActionResult<object>> DeleteManual(int movieTheaterId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(await _repository.DeleteManual(movieTheaterId));
+        }
     }
 }
