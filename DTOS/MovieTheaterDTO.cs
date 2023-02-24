@@ -1,15 +1,17 @@
 ﻿namespace DTOS
 {
-    public record MovieTheaterDTO
+    public class MovieTheaterDTO
     {
-        public string Name { get; init; } = null!;
+        public string Name { get; set; } = null!;
 
-        public string Description { get; init; } = null!;
+        public string Description { get; set; } = null!;
 
-        public double Rating { get; init; }
+        public double Rating { get; set; }
 
-        public double Latitude { get; init; }
+        public double Latitude { get; set; }
 
-        public double Longitude { get; init; }
+        public double Longitude { get; set; }
+
+        public HashSet<CinemaDTO> Cinema { get; set; } = new();
     }
 }

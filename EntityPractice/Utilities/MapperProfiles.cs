@@ -10,9 +10,14 @@ namespace EntityPractice.Utilities
     {
         public MapperProfiles()
         {
-            var geometry = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+
+            //Simple Mapping
+            CreateMap<CinemaDTO, Cinema>();
+            CreateMap<Cinema, CinemaDTO>();
+
 
             //Mapping Spacial Data into the DTO
+            var geometry = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
             CreateMap<MovieTheater, MovieTheaterDTO>()
                 .ForMember(dto => dto.Latitude, ent => ent.MapFrom(prop => prop.Location.X))
                 .ForMember(dto => dto.Longitude, ent => ent.MapFrom(prop => prop.Location.Y));

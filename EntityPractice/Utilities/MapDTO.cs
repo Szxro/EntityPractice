@@ -5,14 +5,14 @@ using Models;
 
 namespace EntityPractice.Utilities
 {
-    public static class AsDTO
+    public static class MapDTO
     {
         /// <summary>
         /// More efficient way to map DTO (single DTO)
         /// </summary>
         /// <param name="movieTheater"></param>
         /// <returns> a Dto of MovieTheater</returns>
-        public static MovieTheaterDTO AsDto(this MovieTheater movieTheater)
+        public static MovieTheaterDTO MovieTheatherAsDto(this MovieTheater movieTheater)
         {
             return new MovieTheaterDTO
             {
@@ -20,8 +20,18 @@ namespace EntityPractice.Utilities
                 Description = movieTheater.Description,
                 Rating = movieTheater.Rating,
                 Latitude = movieTheater.Location.X,
-                Longitude = movieTheater.Location.Y
-            };   
+                Longitude = movieTheater.Location.Y,
+                Cinema = movieTheater.Cinema.Select( prop => prop.CinemaAsDto()).ToHashSet(),
+            };
+        }
+
+        public static CinemaDTO CinemaAsDto(this Cinema cinema)
+        {
+            return new CinemaDTO
+            {
+                CinemaType = cinema.CinemaType,
+                Price = cinema.Price
+            };
         }
     }
 }

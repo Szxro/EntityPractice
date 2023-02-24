@@ -38,13 +38,20 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
         public async Task<IEnumerable<MovieTheaterDTO>> GetMovieTheaterManual()
         {
             //AsNoTracking => more faster queries
-            return await _context.MovieTheaters.AsNoTracking().Select(prop => prop.AsDto()).ToListAsync();
+            return await _context.MovieTheaters.AsNoTracking()
+                                                //Eager Loading 
+                                               .Include(prop=> prop.Cinema)
+                                               .Select(prop => prop.MovieTheatherAsDto())
+                                               .ToListAsync();
             //Select (Project To => Object)
         }
 
         public async Task<IEnumerable<MovieTheaterDTO>> GetMovieTheaterAuto()
         {
-            return await _context.MovieTheaters.AsNoTracking().ProjectTo<MovieTheaterDTO>(_mapper.ConfigurationProvider).ToListAsync();
+            return await _context.MovieTheaters.AsNoTracking()
+                                               .Include(prop => prop.Cinema)
+                                               .ProjectTo<MovieTheaterDTO>(_mapper.ConfigurationProvider)
+                                               .ToListAsync();
         }
 
         public async Task CreateMovieTheaterManual(MovieTheaterDTO movieTheater)
@@ -59,6 +66,15 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
                 Location = geometry.CreatePoint(new Coordinate(movieTheater.Latitude, movieTheater.Longitude))
             };
 
+            //Adding the cinema
+            foreach (CinemaDTO cinema in movieTheater.Cinema)
+            {
+                movie.Cinema = new()
+                {
+                    new Cinema{CinemaType = cinema.CinemaType,Price = cinema.Price }
+                };
+            }
+
             _context.MovieTheaters.Add(movie);
             await _context.SaveChangesAsync();
         }
@@ -69,12 +85,14 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<object> UpdateMovieTheaterManual(int movieTheaterId,MovieTheaterDTO movieTheater)
+        public async Task<object> UpdateMovieTheaterManual(int movieTheaterId, MovieTheaterDTO movieTheater)
         {
             //Getting the item from the DB (? to posible null values)
-            MovieTheater? item = await _context.MovieTheaters.Where(prop => prop.Id == movieTheaterId).FirstOrDefaultAsync();
-            
-            if (item  == null)
+            MovieTheater? item = await _context.MovieTheaters
+                                        .Where(prop => prop.Id == movieTheaterId)
+                                        .FirstOrDefaultAsync();
+
+            if (item == null)
             {
                 return new { Message = "MovieTheater not found" };
             }
@@ -82,16 +100,23 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             //Creating the geometry instance
             var geometryInstance = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
 
-            //Making a copy of it
-            MovieTheater movie = item with
-            {
-                Name = movieTheater.Name,
-                Description = movieTheater.Description,
-                Rating = movieTheater.Rating,
-                Location = geometryInstance.CreatePoint(new Coordinate(movieTheater.Latitude,movieTheater.Longitude))
-            };
+            //Updating the props
+            item.Name = movieTheater.Name;
+            item.Description = movieTheater.Description;
+            item.Rating = movieTheater.Rating;
+            item.Location = geometryInstance.CreatePoint(new Coordinate(movieTheater.Latitude, movieTheater.Longitude));
 
-            _context.MovieTheaters.Update(movie);
+            //Updating the Cinema (Dont do anything to the Cinema)
+            //foreach (Cinema cinema in item.Cinema)
+            //{
+            //    item.Cinema = new()
+            //    {
+            //        new Cinema{CinemaType = cinema.CinemaType, Price = cinema.Price }
+            //    };
+            //}
+
+            //Updating the item 
+            _context.MovieTheaters.Update(item);
 
             await _context.SaveChangesAsync();
 

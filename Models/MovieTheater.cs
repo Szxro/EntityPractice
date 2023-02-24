@@ -3,17 +3,20 @@
 namespace Models
 {
     //Record is use for inmutable data in this case model
-    public record MovieTheater
+    public class MovieTheater
     {
-        public int Id { get; init; } // init is use to set the data and not make a huge ctor
+        public int Id { get; set; } // init is use to set the data and not make a huge ctor
 
-        public string Name { get; init; } = null!;
+        public string Name { get; set; } = null!;
 
-        public string Description { get; init; } = null!;  
+        public string Description { get; set; } = null!;  
 
-        public double Rating { get; init; }
+        public double Rating { get; set; }
 
-        public Point Location { get; init; } = null!;
+        public Point Location { get; set; } = null!;
+
+        //(1:N)
+        public HashSet<Cinema> Cinema { get; set; } = new();
 
     }
 }
