@@ -6,6 +6,7 @@ using EntityPractice.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using Models;
+using Models.Enum;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
@@ -39,8 +40,8 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
         {
             //AsNoTracking => more faster queries
             return await _context.MovieTheaters.AsNoTracking()
-                                                //Eager Loading 
-                                               .Include(prop=> prop.Cinema)
+                                               //Eager Loading
+                                               .Include(x => x.Cinema)
                                                .Select(prop => prop.MovieTheatherAsDto())
                                                .ToListAsync();
             //Select (Project To => Object)
@@ -48,10 +49,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
 
         public async Task<IEnumerable<MovieTheaterDTO>> GetMovieTheaterAuto()
         {
-            return await _context.MovieTheaters.AsNoTracking()
-                                               .Include(prop => prop.Cinema)
-                                               .ProjectTo<MovieTheaterDTO>(_mapper.ConfigurationProvider)
-                                               .ToListAsync();
+            return await _context.MovieTheaters.AsNoTracking().ProjectTo<MovieTheaterDTO>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task CreateMovieTheaterManual(MovieTheaterDTO movieTheater)
@@ -136,6 +134,40 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             await _context.SaveChangesAsync();
 
             return new {Message = "Deleted Succesfully" };
+        }
+
+        public async Task<object> FindAMovieTheaterExplicit(int id)
+        {
+            //Need to be AsTracking
+            MovieTheater? movieTheater = await _context.MovieTheaters.AsTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (movieTheater  == null)
+            {
+                //returning a empty value
+                return Enumerable.Empty<MovieTheaterDTO>();
+            }
+
+            //Explicit Loading (Explit the query in two to load the related data)
+            await _context.Entry(movieTheater).Collection(prop => prop.Cinema).LoadAsync();
+
+            return _mapper.Map<MovieTheaterDTO>(movieTheater);
+        }
+
+        public async Task<IEnumerable<object>> GetMovieTheaterSelect()
+        {
+            //Select Loading (Single Query to load the data)
+            return await _context.MovieTheaters.AsNoTracking()
+                .Select(
+                prop => new {
+                    Name = prop.Name,
+                    Latitude = prop.Location.X,
+                    Longitude = prop.Location.Y,
+                    Cinema = prop.Cinema.Select(load =>
+                    new { 
+                        CinemaType = load.CinemaType,
+                        Price = load.Price })
+                })
+                .ToListAsync();
         }
     }
 }
