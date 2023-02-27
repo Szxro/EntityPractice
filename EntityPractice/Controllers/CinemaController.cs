@@ -16,6 +16,8 @@ namespace EntityPractice.Controllers
             _repository = repository;
         }
 
+        //Order By and Group Actions
+
         [HttpGet("get/orderBy")]
 
         public async Task<ActionResult<IEnumerable<CinemaDTO>>> OrderByPriceAsc()
@@ -28,6 +30,37 @@ namespace EntityPractice.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GroupByPrice()
         {
             return Ok(await _repository.GroupByPrice());
+        }
+
+        //Post Actions
+
+        [HttpPost("post/manualPost")]
+
+        public async Task<ActionResult> PostCinemaManual(CinemaDTO cinema)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(cinema);
+            }
+            await _repository.AddCinemaManual(cinema);
+            return Ok();
+        }
+
+
+        // Loading Related Data
+
+        [HttpGet("get/eagerLoading")]
+
+        public async Task<ActionResult<IEnumerable<CinemaDTO>>> GetEagerCinema()
+        {
+            return Ok(await _repository.GetEagerCinema());
+        }
+
+        [HttpGet("get/selectLoading")]
+
+        public async Task<ActionResult<IEnumerable<object>>> GetSelectCinema()
+        {
+            return Ok(await _repository.GetSelectCinema());
         }
     }
 }

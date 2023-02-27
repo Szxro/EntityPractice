@@ -32,7 +32,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             return await _context.MovieTheaters
                     .AsNoTracking()
                     .OrderBy(or => or.Location.Distance(userCoordinate))
-                    .Select(prop => new { Name = prop.Name, Distance = $"{prop.Location.Distance(userCoordinate)}m" })
+                    .Select(prop => new { prop.Name, Distance = $"{prop.Location.Distance(userCoordinate)}m" })
                     .ToListAsync();
         }
 
@@ -40,8 +40,6 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
         {
             //AsNoTracking => more faster queries
             return await _context.MovieTheaters.AsNoTracking()
-                                               //Eager Loading
-                                               .Include(x => x.Cinema)
                                                .Select(prop => prop.MovieTheatherAsDto())
                                                .ToListAsync();
             //Select (Project To => Object)
@@ -63,15 +61,6 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
                 Rating = movieTheater.Rating,
                 Location = geometry.CreatePoint(new Coordinate(movieTheater.Latitude, movieTheater.Longitude))
             };
-
-            //Adding the cinema
-            foreach (CinemaDTO cinema in movieTheater.Cinema)
-            {
-                movie.Cinema = new()
-                {
-                    new Cinema{CinemaType = cinema.CinemaType,Price = cinema.Price }
-                };
-            }
 
             _context.MovieTheaters.Add(movie);
             await _context.SaveChangesAsync();
@@ -104,16 +93,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             item.Rating = movieTheater.Rating;
             item.Location = geometryInstance.CreatePoint(new Coordinate(movieTheater.Latitude, movieTheater.Longitude));
 
-            //Updating the Cinema (Dont do anything to the Cinema)
-            //foreach (Cinema cinema in item.Cinema)
-            //{
-            //    item.Cinema = new()
-            //    {
-            //        new Cinema{CinemaType = cinema.CinemaType, Price = cinema.Price }
-            //    };
-            //}
 
-            //Updating the item 
             _context.MovieTheaters.Update(item);
 
             await _context.SaveChangesAsync();
@@ -149,6 +129,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
 
             //Explicit Loading (Explit the query in two to load the related data)
             await _context.Entry(movieTheater).Collection(prop => prop.Cinema).LoadAsync();
+            //Explicit Loading requires a collection of data (IEnumerable,List,etc..)
 
             return _mapper.Map<MovieTheaterDTO>(movieTheater);
         }
@@ -158,14 +139,16 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             //Select Loading (Single Query to load the data)
             return await _context.MovieTheaters.AsNoTracking()
                 .Select(
-                prop => new {
-                    Name = prop.Name,
+                prop => new
+                {
+                    prop.Name,
                     Latitude = prop.Location.X,
                     Longitude = prop.Location.Y,
-                    Cinema = prop.Cinema.Select(load =>
-                    new { 
-                        CinemaType = load.CinemaType,
-                        Price = load.Price })
+                    Cinema = prop.Cinema.Select(ent=> new CinemaDTO
+                    {
+                        CinemaType = ent.CinemaType,
+                        Price = ent.Price
+                    })
                 })
                 .ToListAsync();
         }

@@ -7,5 +7,11 @@ namespace EntityPractice.Repositories.CinemaRepository
         Task<IEnumerable<CinemaDTO>> OrderCinemaAsc();
 
         Task<IEnumerable<object>> GroupByPrice();
+
+        Task AddCinemaManual(CinemaDTO cinema);
+
+        Task<IEnumerable<CinemaDTO>> GetEagerCinema();
+
+        Task<IEnumerable<object>> GetSelectCinema();
     }
 }

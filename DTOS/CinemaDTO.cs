@@ -12,5 +12,7 @@ namespace DTOS
         public CinemaType CinemaType { get; set; }
 
         public double Price { get; set; }
+
+        public MovieTheaterDTO MovieTheater { get; set; } = new();
     }
 }

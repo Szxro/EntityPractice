@@ -2,8 +2,12 @@
 using AutoMapper.QueryableExtensions;
 using Context;
 using DTOS;
+using EntityPractice.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Models;
 using Models.Enum;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 
 namespace EntityPractice.Repositories.CinemaRepository
 {
@@ -18,26 +22,25 @@ namespace EntityPractice.Repositories.CinemaRepository
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<object>> GroupByPrice()
+        public async Task AddCinemaManual(CinemaDTO cinema)
         {
-            return await _context.Cinemas
-                                 .GroupBy(x => x.Price > 250)    
-                                 .Select(prop =>
-                                     new {
-                                     IsNotNull = prop.Key,
-                                     Count = prop.Count(),
-                                     Result = prop.ToList().Select(prop =>
-                                     new {
-                                      //Getting the key value from the enum
-                                      CinemaType = prop.CinemaType.ToString(),
-                                      Price = prop.Price,
-                                      MovieTheaterName = prop.MovieTheater.Name,
-                                      MovieTheaterDescription = prop.MovieTheater.Description,
-                                      Latitude = prop.MovieTheater.Location.X,
-                                      Longitude = prop.MovieTheater.Location.Y
-                                     })
-                                 })
-                                  .ToListAsync();
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid:4326);
+
+            Cinema cine = new()
+            {
+                CinemaType = cinema.CinemaType,
+                Price = cinema.Price,
+                MovieTheater = new MovieTheater()
+                {
+                    Name = cinema.MovieTheater.Name,
+                    Description = cinema.MovieTheater.Description,
+                    Rating = cinema.MovieTheater.Rating,
+                    Location = geometryFactory.CreatePoint(new Coordinate(cinema.MovieTheater.Latitude,cinema.MovieTheater.Longitude))
+                }
+            };
+
+            _context.Cinemas.Add(cine);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<CinemaDTO>> OrderCinemaAsc()
@@ -48,5 +51,55 @@ namespace EntityPractice.Repositories.CinemaRepository
                 .OrderBy(x => x.Price) //Ordering by Price (Asc)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<object>> GroupByPrice()
+        {
+            //Select Loading 
+            return await _context.Cinemas
+                                 .GroupBy(x => x.Price > 250)    
+                                 .Select(prop =>
+                                     new {
+                                     IsGreater = prop.Key,
+                                     Count = prop.Count(),
+                                     Result = prop.ToList().Select(prop =>
+                                     new {
+                                      //Getting the key value from the enum
+                                      CinemaType = prop.CinemaType.ToString(),
+                                      prop.Price,
+                                      MovieTheaterName = prop.MovieTheater.Name,
+                                      MovieTheaterDescription = prop.MovieTheater.Description,
+                                      Latitude = prop.MovieTheater.Location.X,
+                                      Longitude = prop.MovieTheater.Location.Y
+                                     })
+                                 })
+                                  .ToListAsync();
+        }     
+
+        // Loading Related Data
+
+        public async Task<IEnumerable<CinemaDTO>> GetEagerCinema()
+        {
+            return await _context.Cinemas
+                .AsNoTracking()
+                //Eager Loading
+                .Include(x => x.MovieTheater)
+                .ProjectTo<CinemaDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<object>> GetSelectCinema()
+        {
+            return await _context.Cinemas
+                        .AsNoTracking()
+                        //Select Loading
+                        .Select(prop => new 
+                        {
+                           CinemaType = prop.CinemaType.ToString(),
+                           prop.Price,
+                           MovieTheather = prop.MovieTheater.MovieTheatherAsDto()
+                        })
+                        .ToListAsync();
+        }
+
     }
 }

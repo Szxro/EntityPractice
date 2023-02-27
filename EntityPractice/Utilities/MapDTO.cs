@@ -20,8 +20,7 @@ namespace EntityPractice.Utilities
                 Description = movieTheater.Description,
                 Rating = movieTheater.Rating,
                 Latitude = movieTheater.Location.X,
-                Longitude = movieTheater.Location.Y,
-                Cinema = movieTheater.Cinema.Select( prop => prop.CinemaAsDto()).ToHashSet(),
+                Longitude = movieTheater.Location.Y
             };
         }
 
@@ -30,7 +29,8 @@ namespace EntityPractice.Utilities
             return new CinemaDTO
             {
                 CinemaType = cinema.CinemaType,
-                Price = cinema.Price
+                Price = cinema.Price,
+                MovieTheater = cinema.MovieTheater.MovieTheatherAsDto(),
             };
         }
     }

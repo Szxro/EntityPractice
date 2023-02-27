@@ -17,11 +17,16 @@ namespace Context
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
-            //Setting the string globally a max length 
+            //Setting the config globally for some properties
             configurationBuilder.Properties<string>().HaveMaxLength(256);
+            configurationBuilder.Properties<DateTime>().HaveColumnType("date");
         }
         public DbSet<MovieTheater> MovieTheaters => Set<MovieTheater>();
 
         public DbSet<Cinema> Cinemas => Set<Cinema>();  
+
+        public DbSet<Movie> Movies => Set<Movie>();
+
+        public DbSet<MovieGenders> MovieGenders => Set<MovieGenders>();
     }
 }
