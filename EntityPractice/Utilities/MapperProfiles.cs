@@ -15,6 +15,10 @@ namespace EntityPractice.Utilities
             CreateMap<CinemaDTO, Cinema>();
             CreateMap<Cinema, CinemaDTO>();
 
+            CreateMap<MovieDTO, Movie>();
+            CreateMap<MovieGenderDTO, MovieGenders>();
+
+            CreateMap<CinemaMovieDTO, CinemaMovie>();
 
             //Mapping Spacial Data into the DTO
             var geometry = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);

@@ -1,6 +1,7 @@
 ﻿using Context.Seed;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using System.Reflection;
 
 namespace Context
 {
@@ -12,7 +13,10 @@ namespace Context
         {
             base.OnModelCreating(modelBuilder);
 
-           // DataSeeding.SetData(modelBuilder); //Setting the default data
+            DataSeeding.SetData(modelBuilder); //Setting the default data
+
+            //Loading the configuration from the Assembly
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -28,5 +32,7 @@ namespace Context
         public DbSet<Movie> Movies => Set<Movie>();
 
         public DbSet<MovieGenders> MovieGenders => Set<MovieGenders>();
+
+        public DbSet<CinemaMovie> CinemaMovies => Set<CinemaMovie>();
     }
 }

@@ -1,5 +1,7 @@
 using Context;
+using EntityPractice.Repositories.CinemaMovieRepository;
 using EntityPractice.Repositories.CinemaRepository;
+using EntityPractice.Repositories.MovieRepository;
 using EntityPractice.Repositories.MovieTheaterRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
     //Dependecy Injection
     builder.Services.AddScoped<IMovieTheaterRepository, MovieTheaterRepository>();
     builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
+    builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+    builder.Services.AddScoped<ICinemaMovieRepository, CinemaMovieRepository>();
     //Adding the AutoMapper
     builder.Services.AddAutoMapper(typeof(Program));
 }

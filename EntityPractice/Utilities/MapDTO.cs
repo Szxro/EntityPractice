@@ -33,5 +33,15 @@ namespace EntityPractice.Utilities
                 MovieTheater = cinema.MovieTheater.MovieTheatherAsDto(),
             };
         }
+
+        public static object MovieAsDto(this Movie movie)
+        {
+            return new
+            {
+                movie.Name,
+                movie.ReleaseDate,
+                movie.IsLive
+            };
+        }
     }
 }

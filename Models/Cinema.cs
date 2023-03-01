@@ -18,5 +18,8 @@ namespace Models
         public int MovieTheaterId { get; set; }
 
         public MovieTheater MovieTheater { get; set; } = new();
+
+        //(N:N) MANUAL
+        public HashSet<CinemaMovie> CinemaMovies { get; set; } = new();
     }
 }
