@@ -43,5 +43,13 @@ namespace EntityPractice.Utilities
                 movie.IsLive
             };
         }
+
+        public static MovieGenderDTO GenderAsDTO(this MovieGenders genders)
+        {
+            return new MovieGenderDTO
+            {
+                Name = genders.Name,
+            };
+        }
     }
 }

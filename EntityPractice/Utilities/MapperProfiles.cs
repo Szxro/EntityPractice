@@ -15,7 +15,10 @@ namespace EntityPractice.Utilities
             CreateMap<CinemaDTO, Cinema>();
             CreateMap<Cinema, CinemaDTO>();
 
+            CreateMap<Movie, MovieDTO>();
             CreateMap<MovieDTO, Movie>();
+
+
             CreateMap<MovieGenderDTO, MovieGenders>();
 
             CreateMap<CinemaMovieDTO, CinemaMovie>();

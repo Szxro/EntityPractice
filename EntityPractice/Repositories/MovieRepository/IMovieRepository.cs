@@ -1,4 +1,5 @@
 ﻿using DTOS;
+using Microsoft.AspNetCore.Mvc;
 using Models;
 
 namespace EntityPractice.Repositories.MovieRepository
@@ -10,5 +11,9 @@ namespace EntityPractice.Repositories.MovieRepository
         Task AddManualMovie(MovieDTO movie);
 
         Task<IEnumerable<object>> GetMovieDTO();
+
+        Task<IEnumerable<object>> GroupByMoviGender();
+
+        Task<List<MovieDTO>> FilterManualByName([FromQuery] MovieFilterDTO filterDTO);
     }
 }

@@ -61,7 +61,7 @@ namespace EntityPractice.Repositories.CinemaRepository
                                      new {
                                      IsGreater = prop.Key,
                                      Count = prop.Count(),
-                                     Result = prop.ToList().Select(prop =>
+                                     Result = prop.Select(prop =>
                                      new {
                                       //Getting the key value from the enum
                                       CinemaType = prop.CinemaType.ToString(),

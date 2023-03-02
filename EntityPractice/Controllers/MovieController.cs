@@ -1,6 +1,5 @@
 ﻿using DTOS;
 using EntityPractice.Repositories.MovieRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EntityPractice.Controllers
@@ -45,6 +44,20 @@ namespace EntityPractice.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GetManual()
         {
             return Ok(await _repository.GetMovieDTO());
+        }
+
+        [HttpGet("get/groupByGenders")]
+
+        public async Task<ActionResult<IEnumerable<object>>> GroupByGenders()
+        {
+            return Ok(await _repository.GroupByMoviGender());
+        }
+
+        [HttpGet("get/FilterBy")]
+
+        public async Task<ActionResult<List<MovieDTO>>> FilterManualByName([FromQuery] MovieFilterDTO filterDTO)
+        {        
+            return Ok(await _repository.FilterManualByName(filterDTO));
         }
     }
 }
