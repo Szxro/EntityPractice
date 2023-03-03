@@ -62,5 +62,18 @@ namespace EntityPractice.Controllers
         {
             return Ok(await _repository.GetSelectCinema());
         }
+
+        [HttpPost("post/AddExistingData")]
+
+        public async Task<ActionResult> AddExistingData(CinemaExistingDTO existingDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(existingDTO);
+            }
+
+            await _repository.AddExistingMovieTheater(existingDTO);
+            return Ok();
+        }
     }
 }

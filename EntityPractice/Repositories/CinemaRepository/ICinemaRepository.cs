@@ -13,5 +13,7 @@ namespace EntityPractice.Repositories.CinemaRepository
         Task<IEnumerable<CinemaDTO>> GetEagerCinema();
 
         Task<IEnumerable<object>> GetSelectCinema();
+
+        Task AddExistingMovieTheater(CinemaExistingDTO existingDTO);
     }
 }

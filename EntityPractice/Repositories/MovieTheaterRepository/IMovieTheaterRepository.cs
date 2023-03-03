@@ -28,5 +28,8 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
         //Select Loading
 
         Task<IEnumerable<object>> GetMovieTheaterSelect();
+
+        //Adding Existing Cinema
+        Task AddExistingCinema(MovieTheaterExistingDTO existingDTO);
     }
 }

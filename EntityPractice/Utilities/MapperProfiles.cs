@@ -15,6 +15,10 @@ namespace EntityPractice.Utilities
             CreateMap<CinemaDTO, Cinema>();
             CreateMap<Cinema, CinemaDTO>();
 
+            CreateMap<CinemaExistingDTO, Cinema>()
+                .ForMember(ent => ent.MovieTheater , prop => prop.MapFrom(dto => new MovieTheater {Id = dto.MovieTheater }));
+
+
             CreateMap<Movie, MovieDTO>();
             CreateMap<MovieDTO, Movie>();
 
@@ -31,6 +35,10 @@ namespace EntityPractice.Utilities
 
             CreateMap<MovieTheaterDTO, MovieTheater>()
                 .ForMember(ent => ent.Location, prop => prop.MapFrom(dto => geometry.CreatePoint(new Coordinate(dto.Latitude, dto.Longitude))));
+
+            CreateMap<MovieTheaterExistingDTO, MovieTheater>()
+                .ForMember(ent => ent.Location, prop => prop.MapFrom(dto => geometry.CreatePoint(new Coordinate(dto.Latitude, dto.Longitude))))
+                .ForMember(ent => ent.Cinema, prop => prop.MapFrom(dto => dto.Cinema.Select(prop => new Cinema {Id = prop })));
         }
     }
 }

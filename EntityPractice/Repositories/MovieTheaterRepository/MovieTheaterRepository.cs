@@ -144,13 +144,27 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
                     prop.Name,
                     Latitude = prop.Location.X,
                     Longitude = prop.Location.Y,
-                    Cinema = prop.Cinema.Select(ent=> new CinemaDTO
+                    Cinema = prop.Cinema.Select(ent=> new 
                     {
-                        CinemaType = ent.CinemaType,
-                        Price = ent.Price
+                        ent.CinemaType,
+                        ent.Price
                     })
                 })
                 .ToListAsync();
+        }
+
+        public async Task AddExistingCinema(MovieTheaterExistingDTO existingDTO)
+        {
+            MovieTheater movieTheater = _mapper.Map<MovieTheater>(existingDTO);
+            //Adding Existing Cinema
+            foreach (var existingCinema in movieTheater.Cinema)
+            {
+                //The default state of EF is Added 
+                _context.Entry(existingCinema).State = EntityState.Unchanged;
+            }
+
+            _context.Add(movieTheater);
+            await _context.SaveChangesAsync();
         }
     }
 }

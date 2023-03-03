@@ -94,6 +94,7 @@ namespace EntityPractice.Repositories.CinemaRepository
                         //Select Loading
                         .Select(prop => new 
                         {
+                           prop.Id,
                            CinemaType = prop.CinemaType.ToString(),
                            prop.Price,
                            MovieTheather = prop.MovieTheater.MovieTheatherAsDto()
@@ -101,5 +102,15 @@ namespace EntityPractice.Repositories.CinemaRepository
                         .ToListAsync();
         }
 
+        public async Task AddExistingMovieTheater(CinemaExistingDTO existingDTO)
+        {
+            Cinema cinema = _mapper.Map<Cinema>(existingDTO);
+
+            _context.Entry(cinema.MovieTheater).State = EntityState.Unchanged;
+
+            _context.Add(cinema);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
