@@ -144,6 +144,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
                     prop.Name,
                     Latitude = prop.Location.X,
                     Longitude = prop.Location.Y,
+                    prop.Description,
                     Cinema = prop.Cinema.Select(ent=> new 
                     {
                         ent.CinemaType,
@@ -165,6 +166,27 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
 
             _context.Add(movieTheater);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<object> UpdateMovieTheaterDesconnected(MovieTheaterDTO theaterDTO,int id)
+        {
+            bool isInDB = await _context.MovieTheaters.AnyAsync(x => x.Id == id);
+            //return true or false is the movieTheather or not.
+
+            if (!isInDB)
+            {
+                return new {Message = $"The MovieTheater with the id {id} was not found" };
+            }
+
+            MovieTheater movieTheater = _mapper.Map<MovieTheater>(theaterDTO); 
+            movieTheater.Id = id;//changing the id to the id given
+
+            _context.Update(movieTheater); //changing the state from added to modified 
+            //update the whole props of the entity
+
+            await _context.SaveChangesAsync();
+
+            return new { Message = "The MovieTheater was updated" };
         }
     }
 }

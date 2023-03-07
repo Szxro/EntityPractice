@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Context;
 using DTOS;
 using EntityPractice.Utilities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.Enum;
@@ -38,9 +39,14 @@ namespace EntityPractice.Repositories.CinemaRepository
                     Location = geometryFactory.CreatePoint(new Coordinate(cinema.MovieTheater.Latitude,cinema.MovieTheater.Longitude))
                 }
             };
+            //Beginning a transaction is something fail is going to rollback  
+            await _context.Database.BeginTransactionAsync();
 
             _context.Cinemas.Add(cine);
             await _context.SaveChangesAsync();
+
+            await _context.Database.CommitTransactionAsync();
+            //Is going to do the changes when the transaction is commit
         }
 
         public async Task<IEnumerable<CinemaDTO>> OrderCinemaAsc()
@@ -111,6 +117,43 @@ namespace EntityPractice.Repositories.CinemaRepository
             _context.Add(cinema);
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<object> UpdateCinemaEF(int id)
+        {
+            Cinema? cinema = await _context.Cinemas.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (cinema == null)
+            {
+                return new {Message = $"The cinema with id {id} was not found" };
+            }
+
+            cinema.Price += 500;
+
+            await _context.SaveChangesAsync();
+
+            return new {Message = "The Cinema was updated" };
+        }
+
+        public async Task<object> UpdateCinemaQuery(int id)
+        {
+            Cinema? cinema = await _context.Cinemas.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (cinema == null)
+            {
+                return new { Message = $"The cinema with id {id} was not found" };
+            }
+
+            await _context.Database.BeginTransactionAsync();
+
+            await _context.Database.ExecuteSqlInterpolatedAsync //Executing a query to improve perfomance
+                ($"UPDATE CINEMAS SET Price = Price * 1.1 WHERE Id = {cinema.Id} AND CinemaType = {cinema.CinemaType}");
+
+            await _context.SaveChangesAsync();
+
+            await _context.Database.CommitTransactionAsync();
+
+            return new { Message = "The Cinema was updated" };
         }
     }
 }

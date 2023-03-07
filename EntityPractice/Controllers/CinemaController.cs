@@ -75,5 +75,19 @@ namespace EntityPractice.Controllers
             await _repository.AddExistingMovieTheater(existingDTO);
             return Ok();
         }
+
+        [HttpPut("update/cinemaEF/{id:int}")]
+
+        public async Task<ActionResult> UpdateCinemaEF(int id)
+        { 
+            return Ok(await _repository.UpdateCinemaEF(id));
+        }
+
+
+        [HttpPut("update/cinemaQuery/{id:int}")]
+        public async Task<ActionResult> UpdateCinemaQuery(int id)
+        {
+            return Ok(await _repository.UpdateCinemaQuery(id));
+        }
     }
 }

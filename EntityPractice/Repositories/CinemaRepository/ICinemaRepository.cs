@@ -15,5 +15,9 @@ namespace EntityPractice.Repositories.CinemaRepository
         Task<IEnumerable<object>> GetSelectCinema();
 
         Task AddExistingMovieTheater(CinemaExistingDTO existingDTO);
+
+        Task<object> UpdateCinemaEF(int id);
+
+        Task<object> UpdateCinemaQuery(int id);
     }
 }

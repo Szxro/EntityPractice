@@ -31,5 +31,8 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
 
         //Adding Existing Cinema
         Task AddExistingCinema(MovieTheaterExistingDTO existingDTO);
+
+        //Updating the MovieTheater by Desconnected model
+        Task<object> UpdateMovieTheaterDesconnected(MovieTheaterDTO theaterDTO, int id);
     }
 }

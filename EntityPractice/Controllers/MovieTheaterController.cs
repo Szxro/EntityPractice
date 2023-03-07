@@ -4,6 +4,7 @@ using EntityPractice.Repositories.MovieTheaterRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using System.Runtime.CompilerServices;
 
 namespace EntityPractice.Controllers
 {
@@ -125,6 +126,18 @@ namespace EntityPractice.Controllers
             }
             await _repository.AddExistingCinema(existingDTO);
             return Ok();
+        }
+
+        [HttpPut("update/MovieTheater/{id:int}")]
+
+        public async Task<ActionResult> UpdateMovieTheaterDesconnected(MovieTheaterDTO theaterDTO,int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(await _repository.UpdateMovieTheaterDesconnected(theaterDTO,id));
         }
     }
 }
