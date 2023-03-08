@@ -1,4 +1,5 @@
 using Context;
+using EntityPractice.Geometry;
 using EntityPractice.Repositories.CinemaMovieRepository;
 using EntityPractice.Repositories.CinemaRepository;
 using EntityPractice.Repositories.MovieRepository;
@@ -23,6 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddScoped<ICinemaRepository, CinemaRepository>();
     builder.Services.AddScoped<IMovieRepository, MovieRepository>();
     builder.Services.AddScoped<ICinemaMovieRepository, CinemaMovieRepository>();
+    //Other Services
+    builder.Services.AddTransient<IGeometryFactory, GeometryFactory>();
     //Adding the AutoMapper
     builder.Services.AddAutoMapper(typeof(Program));
 }

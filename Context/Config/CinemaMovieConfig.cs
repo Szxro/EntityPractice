@@ -15,6 +15,7 @@ namespace Context.Config
         {
             //Building a complex pk
             builder.HasKey(pk => new { pk.MovieId, pk.CinemaId });
+
         }
     }
 }

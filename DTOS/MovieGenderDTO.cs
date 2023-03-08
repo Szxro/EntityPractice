@@ -8,6 +8,21 @@ namespace DTOS
 {
     public class MovieGenderDTO
     {
-        public string Name { get; set; } = null!;
+        //FlexMap
+        private string NewName { get; set; } = null!;
+        public string Name
+        {
+            get //name is going to work with newName
+            {
+                return NewName;
+            }
+            set
+            {
+                NewName = value.ToLower();
+                //value is the actual value that is set to newName 
+            }
+        }
+
+        // public string Name { get; set; } = null!;
     }
 }

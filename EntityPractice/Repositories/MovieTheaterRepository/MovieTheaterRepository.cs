@@ -2,11 +2,10 @@
 using AutoMapper.QueryableExtensions;
 using Context;
 using DTOS;
+using EntityPractice.Geometry;
 using EntityPractice.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using Models;
-using Models.Enum;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
@@ -16,18 +15,20 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IGeometryFactory _factory;
 
-        public MovieTheaterRepository(AppDbContext context,IMapper mapper)
+        public MovieTheaterRepository(AppDbContext context,IMapper mapper,IGeometryFactory factory)
         {
             _context = context;
             _mapper = mapper;
+            _factory = factory;
         }
         public async Task<IEnumerable<object>> GetDistance(double latitude, double longitude)
         {
-            var geometry = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+            var geometry = _factory.geometryFactory();
 
             //Creating the user Coordinate
-            var userCoordinate = geometry.CreatePoint(new Coordinate(latitude,longitude));
+            Point userCoordinate = geometry.CreatePoint(new Coordinate(latitude,longitude));
 
             return await _context.MovieTheaters
                     .AsNoTracking()
@@ -52,7 +53,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
 
         public async Task CreateMovieTheaterManual(MovieTheaterDTO movieTheater)
         {
-            var geometry = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+            var geometry = _factory.geometryFactory();
 
             MovieTheater movie = new()
             {
@@ -85,7 +86,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
             }
 
             //Creating the geometry instance
-            var geometryInstance = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+            var geometryInstance = _factory.geometryFactory();
 
             //Updating the props
             item.Name = movieTheater.Name;
@@ -98,6 +99,7 @@ namespace EntityPractice.Repositories.MovieTheaterRepository
 
             await _context.SaveChangesAsync();
 
+            //This also call using connected Model
             return new {Message = "Update Succesfully" };
         }
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DTOS;
+using EntityPractice.Geometry;
 using Models;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
@@ -10,7 +11,6 @@ namespace EntityPractice.Utilities
     {
         public MapperProfiles()
         {
-
             //Simple Mapping
             CreateMap<CinemaDTO, Cinema>();
             CreateMap<Cinema, CinemaDTO>();

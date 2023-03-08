@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using Context;
 using DTOS;
+using EntityPractice.Geometry;
 using EntityPractice.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,16 +17,18 @@ namespace EntityPractice.Repositories.CinemaRepository
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IGeometryFactory _factory;
 
-        public CinemaRepository(AppDbContext context, IMapper mapper)
+        public CinemaRepository(AppDbContext context, IMapper mapper,IGeometryFactory factory)
         {
             _context = context;
             _mapper = mapper;
+            _factory = factory;
         }
 
         public async Task AddCinemaManual(CinemaDTO cinema)
         {
-            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid:4326);
+            var geometryFactory = _factory.geometryFactory();
 
             Cinema cine = new()
             {
