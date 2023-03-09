@@ -34,5 +34,9 @@ namespace Context
         public DbSet<MovieGenders> MovieGenders => Set<MovieGenders>();
 
         public DbSet<CinemaMovie> CinemaMovies => Set<CinemaMovie>();
+
+        public DbSet<CinemaWithoutPK> CinemaWithoutPK => Set<CinemaWithoutPK>();
+
+        public DbSet<CinemaView> CinemaView => Set<CinemaView>();
     }
 }

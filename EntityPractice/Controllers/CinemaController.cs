@@ -2,6 +2,7 @@
 using EntityPractice.Repositories.CinemaRepository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 
 namespace EntityPractice.Controllers
 {
@@ -31,6 +32,27 @@ namespace EntityPractice.Controllers
         {
             return Ok(await _repository.GroupByPrice());
         }
+
+        [HttpGet("get/Model-Not-Key")]
+
+        public async Task<ActionResult<IEnumerable<CinemaWithoutPK>>> GetCinemaWithOutKey()
+        {
+            return Ok(await _repository.GetCinemaWithoutPKs());
+        }
+
+        [HttpGet("get/CinemaView")]
+
+        public async Task<ActionResult<IEnumerable<CinemaView>>> GetCinemaView()
+        {
+            return Ok(await _repository.GetCinemaView());
+        }
+
+        [HttpGet("get/CinemaById/{id:int}")]
+
+        public async Task<ActionResult<object?>> GetCinemaById(int id)
+        {
+            return Ok(await _repository.GetCinemaById(id));
+        } 
 
         //Post Actions
 

@@ -1,4 +1,5 @@
 ﻿using DTOS;
+using Models;
 
 namespace EntityPractice.Repositories.CinemaRepository
 {
@@ -19,5 +20,11 @@ namespace EntityPractice.Repositories.CinemaRepository
         Task<object> UpdateCinemaEF(int id);
 
         Task<object> UpdateCinemaQuery(int id);
+
+        Task<IEnumerable<CinemaWithoutPK>> GetCinemaWithoutPKs();
+
+        Task<IEnumerable<CinemaView>> GetCinemaView();
+
+        Task<object?> GetCinemaById(int id);
     }
 }

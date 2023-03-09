@@ -158,5 +158,38 @@ namespace EntityPractice.Repositories.CinemaRepository
 
             return new { Message = "The Cinema was updated" };
         }
+
+        public async Task<IEnumerable<CinemaWithoutPK>> GetCinemaWithoutPKs()
+        {
+            //Getting the result 
+            return await _context.CinemaWithoutPK.ToListAsync();
+        }
+
+        public async Task<IEnumerable<CinemaView>> GetCinemaView()
+        {
+            //Executing the result and getting the result
+            return await _context.CinemaView.ToListAsync(); 
+        }
+
+        public async Task<object?> GetCinemaById(int id)
+        {
+            Cinema? cinema = await _context.Cinemas.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (cinema is null)
+            {
+                return new {Message = $"Cinema with the id of {id} was not found" };
+            }
+
+            DateTime StartDate = _context.Entry(cinema).Property<DateTime>("StartDate").CurrentValue;
+
+            return new
+            {
+                Result = new
+                {
+                    Cineam = cinema.CinemaAsDto(),
+                    StartDate
+                }
+            };
+        }
     }
 }
